@@ -48,7 +48,7 @@ Uses Python's `ThreadPoolExecutor` to handle S3 file uploads and AI model invoca
 ### Installation & Setup
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/Insurance-Claim-AI.git](https://github.com/your-username/Insurance-Claim-AI.git)
+   git clone https://github.com/stewartwalc1/Insurance-Claim-AI.git 
    cd Insurance-Claim-AI
 
 2. **Install dependencies:**
