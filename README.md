@@ -73,3 +73,11 @@ Uses Python's `ThreadPoolExecutor` to handle S3 file uploads and AI model invoca
 * Solved PDF I/O errors by using io.BytesIO buffers for simultaneous S3 uploading and text extraction.
 * Implemented custom logic to isolate AI-generated JSON from conversational filler.
 * Built with Tailwind CSS, featuring a real-time JavaScript loading state for a reactive user experience.
+
+
+## Images of UI ##
+![Starting UI](screenshots/UIStart.png)
+![Upload PDF Claim](screenshots/UIUploaad.png)
+![Submit Claim](screenshots/UIProcessing.png)
+![Claim Results](screenshots/UIResults.png)
+![Claim Results for Flood](screenshots/UIResultsFlood.png)
