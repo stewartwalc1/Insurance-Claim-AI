@@ -1,63 +1,75 @@
-InsuranceGenAI | Intelligent Claims Adjuster (Technical PoC)
+# InsuranceGenAI | Intelligent Claims Adjuster (Technical PoC)
+
 InsuranceGenAI is a proof-of-concept (PoC) platform designed to automate the triage and analysis of homeowners insurance claims. By orchestrating multiple specialized AI models via Amazon Bedrock, the system extracts claim data, validates it against policy documents using RAG (Retrieval-Augmented Generation), and drafts empathetic customer communications—all while enforcing enterprise-grade PII masking.
 
-Note: This is a technical demonstration of implementation and AI orchestration. It is not a production-ready business solution and lacks persistent database storage and user authentication.
+> **Disclaimer:** This project is a **Technical Proof of Concept**. It is designed to demonstrate AI orchestration, RAG implementation, and security guardrails. It is not a production-ready business solution and lacks persistent database storage (DynamoDB/PostgreSQL) and user authentication (AWS Cognito).
 
-The Architecture
-The system follows a "Team of Models" approach to ensure the highest accuracy for specific tasks:
+---
 
-Extraction: Claude 3.5 Sonnet extracts structured data from unstructured claim letters.
+## Architecture & AI Orchestration
 
-Logic & Analysis: Amazon Nova Micro performs the heavy lifting of policy cross-referencing.
+The system follows a "Team of Models" approach, leveraging the strengths of different LLMs for specific business tasks:
 
-Communication: Claude 3.5 Haiku generates customer-facing emails.
+| Task | AI Model | Why this model? |
+| :--- | :--- | :--- |
+| **Data Extraction** | `Claude 3.5 Sonnet` | High reasoning capability for complex PDF parsing. |
+| **Policy Analysis** | `Amazon Nova Micro` | Optimized for speed and cost-effective logic processing. |
+| **Customer Email** | `Claude 3.5 Haiku` | Excellent at maintaining a specific, empathetic tone. |
 
-Security: Amazon Bedrock Guardrails masks PII (Emails, Phones) on both input and output.
 
-Key Features
-1. Robust Data Extraction
-Converts messy, human-written claim letters into structured JSON. Includes a custom "Flood Gate" logic that identifies high-risk claims (Floods) and flags them for mandatory human review.
 
-2. Retrieval-Augmented Generation (RAG)
-Instead of relying on the model's general knowledge, InsurAI queries an Amazon Bedrock Knowledge Base populated with actual policy PDF documents to ensure decisions are grounded in real contract terms.
+---
 
-3. Privacy-First Design
-Implemented PII Masking using Bedrock Guardrails. The system identifies sensitive entities like phone numbers and email addresses and masks them before they are processed by the LLM, ensuring data privacy by design.
+## Key Features
 
-4. Optimized Performance
-Uses Python's ThreadPoolExecutor to handle S3 file uploads and AI model invocations in parallel, reducing the total processing time by approximately 30%.
+### 1. Retrieval-Augmented Generation (RAG)
+Rather than relying on pre-trained knowledge, the system queries an Amazon Bedrock Knowledge Base. It retrieves actual policy clauses from uploaded PDF contracts to ground the AI's decision in real legal text.
 
-🚀 Getting Started
-Prerequisites
-AWS Account with Amazon Bedrock model access (Claude 3.5 & Nova).
+### 2. Privacy-First Security (Guardrails)
+Implemented Amazon Bedrock Guardrails to provide:
+* **PII Masking:** Automatically redacts phone numbers, emails, and addresses.
+* **Content Filtering:** Ensures the model does not provide unauthorized legal advice or use inappropriate language.
 
-Python 3.9+
+### 3. "Flood Gate" Business Logic
+A built-in safety valve that detects high-severity keywords (e.g., "Flood"). If a catastrophic event is detected, the AI automatically pauses the automation and flags the claim for Manual Human Intervention.
 
-S3 Bucket and Bedrock Knowledge Base set up with policy documents.
+### 4. Parallel Performance
+Uses Python's `ThreadPoolExecutor` to handle S3 file uploads and AI model invocations simultaneously, reducing user wait times by ~30%.
 
-Installation
-Clone the repo:
+---
 
-Bash
-git clone https://github.com/your-username/insurai-poc.git
-cd insurai-poc
-Install dependencies:
+## Getting Started
 
-Bash
-pip install -r requirements.txt
-Configure Environment Variables:
-Create a .env file in the root directory:
+### Prerequisites
+* AWS Account with Bedrock Model access enabled.
+* Python 3.9+
+* Environment variables configured in a `.env` file.
 
-Code snippet
-AWS_ACCESS_KEY_ID=your_key
-AWS_SECRET_ACCESS_KEY=your_secret
-S3_BUCKET_NAME=your_bucket
-KNOWLEDGE_BASE_ID=your_kb_id
-GUARDRAIL_ID=your_guardrail_id
-GUARDRAIL_VERSION=3
-🛠️ Technical Challenges Overcome
-Handling PDF I/O: Solved "Closed File" errors by reading PDF bytes into memory buffers before passing them to the S3 uploader and the PDF parser simultaneously.
+### Installation & Setup
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/Insurance-Claim-AI.git](https://github.com/your-username/Insurance-Claim-AI.git)
+   cd Insurance-Claim-AI
 
-Guardrail False Positives: Tuned Amazon Bedrock Guardrail content filters to "Low" to allow professional insurance terminology (e.g., "destroyed," "loss," "water damage") to pass through while still masking personal contact info.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
 
-JSON Parsing: Built a custom "stripper" function to handle Claude's conversational output and isolate the raw JSON objects for the backend.
+3. **Configure Environment (.env):**
+   ```bash
+   S3_BUCKET_NAME=your-bucket-name
+   KNOWLEDGE_BASE_ID=your-kb-id
+   GUARDRAIL_ID=your-guardrail-id
+   GUARDRAIL_VERSION=3
+
+4. **Run the Application:**
+   ```bash
+   python app.py
+
+---
+
+## Technical Implementation Details
+
+* Solved PDF I/O errors by using io.BytesIO buffers for simultaneous S3 uploading and text extraction.
+* Implemented custom logic to isolate AI-generated JSON from conversational filler.
+* Built with Tailwind CSS, featuring a real-time JavaScript loading state for a reactive user experience.
