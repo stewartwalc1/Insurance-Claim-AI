@@ -1,0 +1,9 @@
+# AWS SDK
+boto3>=1.34.0
+
+# Web Framework
+Flask>=3.0.0
+python-dotenv>=1.0.0
+
+# Document Handling
+pypdf>=4.0.0
